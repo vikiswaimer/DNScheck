@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNS Checker + SSL - BeCloud</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --primary-hover: #004494;
+            --bg-sidebar: #f8f9fa;
+            --bg-content: #ffffff;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --ssl-green: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 30px;
+            align-content: start;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .search-input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,86,179,0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .status-ok { background: #d4edda; color: var(--success); }
+        .status-warning { background: #fff3cd; color: #856404; }
+        .status-error { background: #f8d7da; color: var(--danger); }
+        .status-ssl-ok { background: #d1fae5; color: var(--ssl-green); }
+
+        .dns-record {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .record-type {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .record-value {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-left: 20px;
+        }
+
+        .recommendation.missing {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-left-color: var(--warning);
+        }
+
+        .ssl-section {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 2px solid var(--ssl-green);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header h1 { font-size: 2rem; }
+            .search-input { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🔍 DNS + SSL Checker</h1>
+            <p style="color: var(--text-muted); font-size: 1.2rem;">Полная проверка DNS записей и SSL сертификата с рекомендациями для BeCloud</p>
+        </div>
+
+        <!-- SEARCH SECTION -->
+        <div class="search-section">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">Введите домен</h2>
+            <div class="search-input-group">
+                <svg class="search-icon" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" class="search-input" id="domainInput" placeholder="example.com или becloud.by" value="becloud.by">
+            </div>
+            <button class="btn btn-primary" onclick="checkDNS()">🔍 Проверить DNS + SSL</button>
+        </div>
+
+        <!-- RESULTS SECTION -->
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <div id="overallStatus"></div>
+            <div id="dnsRecords"></div>
+        </div>
+    </div>
+
+    <script>
+        // Расширенные шаблоны DNS + SSL для BeCloud
+        const dnsTemplates = {
+            A: {
+                name: '@',
+                type: 'A',
+                value: '185.165.124.XXX',
+                ttl: '3600',
+                status: 'required',
+                description: 'Основная A-запись указывает IP адрес вашего веб-сервера'
+            },
+            WWW: {
+                name: 'www',
+                type: 'CNAME',
+                value: '@',
+                ttl: '3600',
+                status: 'recommended',
+                description: 'CNAME для www.поддомена (перенаправляет на основной домен)'
+            },
+            MX: {
+                name: '@',
+                type: 'MX',
+                value: 'mx.becloud.by',
+                priority: '10',
+                ttl: '3600',
+                status: 'recommended',
+                description: 'Почтовый сервер BeCloud. Приоритет 10 означает основным'
+            },
+            NS: {
+                name: '@',
+                type: 'NS',
+                value: ['ns1.becloud.by', 'ns2.becloud.by'],
+                ttl: '86400',
+                status: 'required',
+                description: 'NS сервера BeCloud обязательны для делегирования домена'
+            },
+            SPF: {
+                name: '@',
+                type: 'TXT',
+                value: 'v=spf1 include:_spf.becloud.by ~all',
+                ttl: '3600',
+                status: 'required',
+                description: 'SPF запись обязательна! Без неё 90% писем попадут в СПАМ'
+            },
+            DKIM: {
+                name: 'default._domainkey',
+                type: 'TXT',
+                value: 'v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC...',
+                ttl: '3600',
+                status: 'recommended',
+                description: 'DKIM ключ получаете в панели BeCloud → Почта → DKIM'
+            },
+            HTTPS: {
+                name: 'SSL/HTTPS',
+                type: 'HTTPS',
+                value: 'Valid SSL Certificate',
+                status: 'required',
+                description: `Для HTTPS нужен действующий SSL сертификат:
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>✅ Срок действия > 30 дней</li>
+                    <li>✅ Совместимые шифры (TLS 1.2+)</li>
+                    <li>✅ Полная цепочка сертификатов</li>
+                    <li>✅ HSTS заголовок (опционально)</li>
+                </ul>`,
+                sslCheck: true
+            },
+            CAA: {
+                name: '@',
+                type: 'CAA',
+                value: 'letsencrypt.org',
+                ttl: '3600',
+                status: 'recommended',
+                description: 'CAA запись указывает, кто может выдавать SSL для домена (Let\'s Encrypt, GlobalSign)'
+            }
+        };
+
+        // Имитация DNS + SSL данных
+        const mockDNSData = {
+            'becloud.by': {
+                A: [{name: '@', value: '185.165.124.50', ttl: 3600}],
+                NS: [{name: '@', value: 'ns1.becloud.by'}, {name: '@', value: 'ns2.becloud.by'}],
+                MX: [{name: '@', value: 'mx.becloud.by', priority: 10}],
+                TXT: [{name: '@', value: 'v=spf1 include:_spf.becloud.by ~all'}],
+                CNAME: [{name: 'www', value: 'becloud.by'}],
+                SSL: {
+                    valid: true,
+                    expires: '2026-05-15',
+                    issuer: 'GlobalSign',
+                    chain: 'complete',
+                    rating: 'A+'
+                }
+            },
+            'example.com': {
+                A: [{name: '@', value: '93.184.216.34', ttl: 3600}],
+                NS: [{name: '@', value: 'a.iana-servers.net'}],
+                SSL: {
+                    valid: false,
+                    expires: '2025-12-01',
+                    issuer: 'Self-signed',
+                    chain: 'broken',
+                    rating: 'F'
+                }
+            }
+        };
+
+        function checkDNS() {
+            const domain = document.getElementById('domainInput').value.trim().replace(/https?:\/\//g, '').replace(/\/.*$/, '');
+            
+            if (!domain) {
+                alert('Введите домен');
+                return;
+            }
+
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('resultsSection').scrollIntoView({behavior: 'smooth'});
+
+            setTimeout(() => {
+                displayResults(domain);
+            }, 1000);
+        }
+
+        function displayResults(domain) {
+            const records = mockDNSData[domain.toLowerCase()] || {};
+            let html = '';
+            let totalChecks = Object.keys(dnsTemplates).length;
+            let passedChecks = 0;
+
+            // Подсчёт статуса
+            for (let typeKey in dnsTemplates) {
+                const template = dnsTemplates[typeKey];
+                const foundRecords = records[template.type] || [];
+                
+                if (template.status === 'required' && foundRecords.length > 0) passedChecks++;
+                else if (template.status === 'recommended' && foundRecords.length > 0) passedChecks += 0.5;
+            }
+
+            // SSL статус
+            const sslStatus = records.SSL || {valid: false};
+            const sslPassed = sslStatus.valid ? 1 : 0;
+            passedChecks += sslPassed;
+
+            const statusClass = passedChecks >= totalChecks * 0.8 ? 'status-ok' : passedChecks > totalChecks * 0.5 ? 'status-warning' : 'status-error';
+            const statusText = passedChecks >= totalChecks * 0.8 ? '✅ Идеальная конфигурация!' : passedChecks > totalChecks * 0.5 ? '⚠️ Нужны улучшения' : '❌ Критические проблемы';
+
+            // Общий статус
+            document.getElementById('overallStatus').innerHTML = `
+                <div style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; border-left: 5px solid var(--${statusClass === 'status-ok' ? 'success' : statusClass === 'status-warning' ? 'warning' : 'danger'});">
+                    <h3 style="margin: 0 0 10px 0; color: var(--${statusClass === 'status-ok' ? 'success' : statusClass === 'status-warning' ? 'warning' : 'danger'});">${statusText}</h3>
+                    <p style="margin: 0; color: var(--text-muted);">Проверено: <strong>${Math.round(passedChecks)}/${totalChecks}</strong> записей | SSL: <span class="status-${sslStatus.valid ? 'ssl-ok' : 'error'}">${sslStatus.valid ? '✅ Действует' : '❌ Проблемы'}</span></p>
+                </div>
+            `;
+
+            // DNS + SSL записи
+            for (let typeKey in dnsTemplates) {
+                const template = dnsTemplates[typeKey];
+                const foundRecords = records[template.type] || [];
+                
+                let recordHtml = '';
+                
+                // SSL специальный блок
+                if (template.sslCheck) {
+                    recordHtml = `
+                        <div class="ssl-section">
+                            <div style="font-size: 16px; color: ${sslStatus.valid ? 'var(--ssl-green)' : 'var(--danger)'}; margin-bottom: 10px;">
+                                ${sslStatus.valid ? '🔒 SSL валиден' : '⚠️ SSL проблемы'}
+                            </div>
+                            <div style="font-family: monospace; background: white; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                                Выдан: ${sslStatus.issuer || 'Неизвестно'}<br>
+                                Истекает: ${sslStatus.expires || 'N/A'}<br>
+                                Цепочка: ${sslStatus.chain || 'broken'}<br>
+                                Рейтинг: <strong>${sslStatus.rating || 'F'}</strong>
+                            </div>
+                        </div>
+                    `;
+                } else if (foundRecords.length > 0) {
+                    // Обычные DNS записи
+                    recordHtml = foundRecords.map(record => `
+                        <div class="record-value">
+                            ${record.name || template.name} → ${record.value || record}
+                            ${record.priority ? ` (Приоритет: ${record.priority})` : ''}
+                            ${record.ttl ? ` (TTL: ${record.ttl}s)` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    recordHtml = `<div class="record-value" style="color: var(--text-muted); font-style: italic;">🔍 Запись не обнаружена</div>`;
+                }
+
+                html += `
+                    <div class="dns-record">
+                        <div class="record-type">${getRecordIcon(template.type)} ${template.type}</div>
+                        ${recordHtml}
+                        
+                        <div class="recommendation ${foundRecords.length === 0 && !template.sslCheck ? 'missing' : ''}">
+                            <strong>${foundRecords.length > 0 || template.sslCheck ? '✅ Корректно' : '🔧 Добавьте запись'}:</strong><br>
+                            ${template.description}<br><br>
+                            <code style="font-size: 13px;">${template.name} ${template.type} ${template.value}${template.priority ? ` (приоритет ${template.priority})` : ''}</code>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('dnsRecords').innerHTML = html;
+        }
+
+        function getRecordIcon(type) {
+            const icons = {
+                'A': '🌐',
+                'AAAA': '🌐',
+                'CNAME': '🔗',
+                'MX': '📧',
+                'NS': '🛡️',
+                'TXT': '📝',
+                'SRV': '⚙️',
+                'HTTPS': '🔒',
+                'CAA': '📜'
+            };
+            return icons[type] || '📋';
+        }
+
+        document.getElementById('domainInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkDNS();
+        });
+
+        window.onload = () => {
+            checkDNS();
+        };
+    </script>
+</body>
+</html>
