@@ -6,16 +6,16 @@
     <title>DNS Checker | G-Cloud</title>
     <style>
         :root {
-            --bg-primary: #0f0f23;
-            --bg-gradient: linear-gradient(135deg, #1e1e3f 0%, #2a2a4a 100%);
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --text-primary: #ffffff;
-            --text-secondary: #b8b8d9;
-            --accent: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
         }
 
         * {
@@ -26,234 +26,156 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-primary);
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
             min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
         }
 
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 20s infinite linear;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
-        }
-
-        .main-container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding: 40px 20px;
+        .container {
             max-width: 1200px;
             margin: 0 auto;
-            position: relative;
-            z-index: 2;
+            padding: 40px 20px;
         }
 
-        .search-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--glass-border);
-            border-radius: 32px;
-            padding: 60px 40px;
+        .header {
             text-align: center;
-            box-shadow: 0 32px 64px rgba(0,0,0,0.3);
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            margin-bottom: 40px;
+            margin-bottom: 48px;
         }
 
-        .search-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 48px 96px rgba(0,0,0,0.4);
-        }
-
-        .logo {
-            font-size: clamp(3rem, 8vw, 5rem);
-            background: var(--accent);
+        .header h1 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            background: linear-gradient(135deg, var(--primary), #1e40af);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            font-weight: 900;
-            margin-bottom: 24px;
-            letter-spacing: -0.03em;
+            font-weight: 800;
+            margin-bottom: 16px;
         }
 
-        .subtitle {
-            font-size: 1.4rem;
-            color: var(--text-secondary);
-            margin-bottom: 48px;
-            line-height: 1.6;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+        .header-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 48px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+            margin-bottom: 32px;
         }
 
         .search-container {
             position: relative;
-            display: inline-block;
-            width: 100%;
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto 32px;
         }
 
         .search-input {
             width: 100%;
-            padding: 24px 32px 24px 80px;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(20px);
-            border: 2px solid transparent;
-            border-radius: 24px;
-            font-size: 1.3rem;
-            color: var(--text-primary);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            padding: 20px 20px 20px 60px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+            background: #fff;
         }
 
         .search-input:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
-            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
         }
 
         .search-icon {
             position: absolute;
-            left: 32px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            width: 32px;
-            height: 32px;
-            color: var(--text-secondary);
-            transition: all 0.3s;
+            color: var(--text-muted);
+            width: 24px;
+            height: 24px;
         }
 
-        .check-button {
-            padding: 24px 64px;
-            background: var(--accent);
-            border: none;
-            border-radius: 24px;
-            font-size: 1.3rem;
-            font-weight: 700;
+        .check-btn {
+            width: 100%;
+            max-width: 300px;
+            padding: 18px 32px;
+            background: var(--primary);
             color: white;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            box-shadow: 0 16px 32px rgba(102, 126, 234, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .check-button:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 24px 48px rgba(102, 126, 234, 0.5);
-        }
-
-        .results-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--glass-bg);
-            backdrop-filter: blur(40px);
-            border-top: 1px solid var(--glass-border);
-            transform: translateY(100%);
-            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 1000;
-            padding: 0;
-        }
-
-        .results-panel.visible {
-            transform: translateY(0);
-        }
-
-        .results-header {
-            padding: 32px 40px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 24px 24px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .results-close {
-            background: none;
             border: none;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 8px;
             border-radius: 12px;
-            transition: all 0.3s;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .results-close:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
+        .check-btn:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3);
         }
 
-        .results-content {
-            padding: 40px;
-            max-height: 70vh;
-            overflow-y: auto;
-            padding-bottom: 100px;
+        .check-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
 
-        .score-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-
-        .score-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+        .results {
+            display: none;
+            background: var(--bg-card);
             border-radius: 20px;
-            padding: 32px;
-            text-align: center;
-            transition: all 0.3s;
+            padding: 48px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+            margin-top: 32px;
         }
 
-        .score-number {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 12px;
-            background: var(--accent);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .overall-score {
+            text-align: center;
+            margin-bottom: 48px;
         }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 auto 16px;
+            position: relative;
+        }
+
+        .score-100 { background: conic-gradient(var(--success) 0deg 360deg, #e2e8f0 360deg 360deg); }
+        .score-75 { background: conic-gradient(var(--success) 0deg 270deg, #facc15 270deg 315deg, #e2e8f0 315deg 360deg); }
+        .score-50 { background: conic-gradient(var(--success) 0deg 180deg, #facc15 180deg 270deg, #ef4444 270deg 360deg); }
+        .score-0 { background: conic-gradient(var(--danger) 0deg 360deg, #e2e8f0 360deg 360deg); }
 
         .records-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
         }
 
         .record-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 28px;
-            transition: all 0.3s;
+            background: #f8fafc;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
         }
+
+        .record-card.ok { border-color: var(--success); }
+        .record-card.warning { border-color: var(--warning); }
+        .record-card.error { border-color: var(--danger); }
 
         .record-header {
             display: flex;
@@ -265,19 +187,20 @@
         .record-icon {
             width: 56px;
             height: 56px;
-            border-radius: 16px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem;
-            background: rgba(255, 255, 255, 0.1);
+            font-size: 1.5rem;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .status-badge {
             padding: 8px 20px;
             border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 700;
+            font-size: 0.875rem;
+            font-weight: 600;
             text-transform: uppercase;
         }
 
@@ -285,111 +208,113 @@
         .status-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
         .status-error { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
 
+        .record-current {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-family: 'SF Mono', monospace;
+            border-left: 4px solid var(--primary);
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .recommendation.our-ns {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            margin-left: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-hover);
+        }
+
         .loading {
             text-align: center;
             padding: 60px;
-            color: var(--text-secondary);
+            color: var(--text-muted);
         }
 
         @media (max-width: 768px) {
-            .main-container { padding: 20px 16px; }
-            .search-card { padding: 40px 24px; margin-bottom: 20px; }
-            .results-content { padding: 24px; }
+            .container { padding: 20px 16px; }
+            .search-section, .results { padding: 32px 24px; }
+            .records-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="particles" id="particles"></div>
-
-    <div class="main-container">
-        <div class="search-card">
-            <div style="position: relative;">
-                <div class="logo">🔍</div>
-                <div class="subtitle">
-                    Проверьте на сколько хорошо настроены DNS записи для корректной работы на наших серверах
-                </div>
-                
-                <div class="search-container">
-                    <input 
-                        type="text" 
-                        class="search-input" 
-                        id="domainInput" 
-                        placeholder="Введите домен (zhodino.gov.by)"
-                        value="zhodino.gov.by"
-                    >
-                    <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5z"/>
-                    </svg>
-                </div>
-
-                <button class="check-button" onclick="checkDNS()">
-                    🚀 Проверить DNS
-                </button>
-            </div>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 DNS Checker</h1>
+            <p class="header-subtitle">
+                Проверьте на сколько хорошо настроены DNS записи для корректной работы на наших серверах
+            </p>
         </div>
-    </div>
 
-    <div class="results-panel" id="resultsPanel">
-        <div class="results-header">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="font-size: 1.4rem; font-weight: 700;">Результаты проверки DNS</div>
-                <div id="overallScore" style="font-size: 1.2rem;"></div>
+        <div class="search-section">
+            <div class="search-container">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5z"/>
+                </svg>
+                <input type="text" class="search-input" id="domainInput" placeholder="zhodino.gov.by" value="zhodino.gov.by">
             </div>
-            <button class="results-close" onclick="closeResults()">✕</button>
+            <button class="check-btn" onclick="checkDNS()">
+                🚀 Проверить DNS
+            </button>
         </div>
-        <div class="results-content">
-            <div id="scoreGrid" class="score-grid"></div>
-            <div id="recordsGrid" class="records-grid"></div>
-            <div id="loading" class="loading" style="display: none;">
-                🔄 Анализируем DNS записи...
+
+        <div class="results" id="results">
+            <div class="overall-score">
+                <div class="score-circle" id="scoreCircle"></div>
+                <div style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);" id="scoreText"></div>
             </div>
+            <div class="records-grid" id="recordsGrid"></div>
         </div>
     </div>
 
     <script>
-        // Точные G-Cloud настройки
+        // ⚠️ 100% ОФФЛАЙН - никаких внешних запросов!
         const gcloudTemplates = {
             MX1: { 
-                type: 'MX', 
-                name: '@', 
-                priority: 10, 
-                value: 'mg.g-cloud.by', 
-                ttl: 3600,
-                icon: '📧', 
-                status: 'required',
-                desc: 'Основной почтовый сервер (приоритет 10)'
+                type: 'MX', name: '@', priority: 10, value: 'mg.g-cloud.by', ttl: 3600,
+                icon: '📧', status: 'required',
+                desc: 'Основной MX сервер (приоритет 10)'
             },
             MX2: { 
-                type: 'MX', 
-                name: '@', 
-                priority: 20, 
-                value: 'ms8.g-cloud.by', 
-                ttl: 3600,
-                icon: '📧', 
-                status: 'required',
-                desc: 'Резервный почтовый сервер (приоритет 20)'
+                type: 'MX', name: '@', priority: 20, value: 'ms8.g-cloud.by', ttl: 3600,
+                icon: '📧', status: 'required', 
+                desc: 'Резервный MX сервер (приоритет 20)'
             },
             SPF: { 
-                type: 'TXT', 
-                name: '@', 
-                value: 'v=spf1 include:_spf.g-cloud.by +a +mx -all', 
-                ttl: 3600,
-                icon: '📝', 
-                status: 'required',
-                desc: 'SPF запись для защиты от спама'
+                type: 'TXT', name: '@', value: 'v=spf1 include:_spf.g-cloud.by +a +mx -all', ttl: 3600,
+                icon: '📝', status: 'required',
+                desc: 'SPF защита от спама'
             },
             DMARC: { 
-                type: 'TXT', 
-                name: '_dmarc', 
-                value: 'v=DMARC1; p=reject; aspf=s', 
-                ttl: 3600,
-                icon: '🔒', 
-                status: 'required',
-                desc: 'DMARC политика (строгий reject)'
+                type: 'TXT', name: '_dmarc', value: 'v=DMARC1; p=reject; aspf=s', ttl: 3600,
+                icon: '🔒', status: 'required',
+                desc: 'DMARC строгая политика'
             }
         };
 
-        const mockData = {
+        // Мок данные для демонстрации (можно расширить)
+        const demoData = {
             'zhodino.gov.by': {
                 MX: [
                     {name: 'zhodino.gov.by.', priority: 10, value: 'mg.g-cloud.by.'},
@@ -399,137 +324,162 @@
                     {name: 'zhodino.gov.by.', value: 'v=spf1 include:_spf.g-cloud.by +a +mx -all'},
                     {name: '_dmarc.zhodino.gov.by.', value: 'v=DMARC1; p=reject; aspf=s'}
                 ]
+            },
+            'example.com': {
+                MX: [{name: '@', priority: 10, value: 'mail.example.com'}]
             }
         };
 
         function checkDNS() {
-            const domain = document.getElementById('domainInput').value.trim().replace(/https?:\/\//g, '').replace(/\/.*$/, '');
+            const domain = document.getElementById('domainInput').value.trim();
             if (!domain) return alert('Введите домен!');
             
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('resultsPanel').classList.add('visible');
+            const btn = document.querySelector('.check-btn');
+            const results = document.getElementById('results');
             
+            btn.disabled = true;
+            btn.textContent = '🔄 Проверяем...';
+            results.style.display = 'block';
+            results.scrollIntoView({ behavior: 'smooth' });
+
+            // МГНОВЕННАЯ проверка (0 внешних запросов)
             setTimeout(() => {
                 showResults(domain);
-            }, 1200);
+                btn.disabled = false;
+                btn.textContent = '✅ Проверить еще раз';
+            }, 500);
         }
 
         function showResults(domain) {
-            const data = mockData[domain.toLowerCase()] || {};
-            document.getElementById('loading').style.display = 'none';
+            const data = demoData[domain.toLowerCase()] || {};
+            const score = calculateScore(data);
             
-            renderScores(data);
+            renderScore(score);
             renderRecords(data);
+        }
+
+        function calculateScore(data) {
+            let passed = 0, total = Object.keys(gcloudTemplates).length;
             
-            const score = calculateOverallScore(data);
-            document.getElementById('overallScore').textContent = `${score}%`;
-        }
-
-        function calculateOverallScore(data) {
-            let score = 0, total = Object.keys(gcloudTemplates).length;
             for (let key in gcloudTemplates) {
-                const records = data[gcloudTemplates[key].type] || [];
-                const hasCorrectRecord = records.some(r => 
-                    r.priority === gcloudTemplates[key].priority || 
-                    r.value.includes(gcloudTemplates[key].value)
+                const template = gcloudTemplates[key];
+                const records = data[template.type] || [];
+                
+                const isCorrect = records.some(record => 
+                    record.priority === template.priority || 
+                    record.value.includes(template.value)
                 );
-                score += hasCorrectRecord ? 100 / total : 0;
+                
+                if (isCorrect) passed++;
             }
-            return Math.round(score);
-        }
-
-        function renderScores(data) {
-            const dnsScore = calculateDNSScore(data);
             
-            document.getElementById('scoreGrid').innerHTML = `
-                <div class="score-card">
-                    <div class="score-number">${dnsScore}%</div>
-                    <div style="color: var(--text-secondary);">DNS Конфигурация</div>
-                </div>
-            `;
+            return Math.round((passed / total) * 100);
         }
 
-        function calculateDNSScore(data) {
-            let score = 0, total = Object.keys(gcloudTemplates).length;
-            for (let key in gcloudTemplates) {
-                const records = data[gcloudTemplates[key].type] || [];
-                const hasCorrectRecord = records.some(r => 
-                    r.priority === gcloudTemplates[key].priority || 
-                    r.value.includes(gcloudTemplates[key].value)
-                );
-                if (hasCorrectRecord) score++;
-            }
-            return Math.round((score / total) * 100);
+        function renderScore(score) {
+            const circle = document.getElementById('scoreCircle');
+            const text = document.getElementById('scoreText');
+            
+            circle.className = `score-circle score-${score}`;
+            text.textContent = `${score}% готовности`;
+            
+            const status = score >= 100 ? '✅ Идеально!' : 
+                          score >= 75 ? '⚠️ Почти готово' : 
+                          score >= 50 ? '🔧 Нужно доработать' : '❌ Критические ошибки';
+            
+            text.insertAdjacentHTML('beforeend', `<div style="font-size: 1rem; margin-top: 8px; color: var(--text-muted);">${status}</div>`);
         }
 
         function renderRecords(data) {
             let html = '';
+            
             for (let key in gcloudTemplates) {
-                const t = gcloudTemplates[key];
-                const records = data[t.type] || [];
-                const hasCorrectRecord = records.some(r => 
-                    r.priority === t.priority || 
-                    r.value.includes(t.value)
+                const template = gcloudTemplates[key];
+                const records = data[template.type] || [];
+                const hasCorrect = records.some(r => 
+                    r.priority === template.priority || 
+                    r.value.includes(template.value)
                 );
-                const status = hasCorrectRecord ? 'ok' : 'error';
+                const status = hasCorrect ? 'ok' : 'error';
                 
                 html += `
-                    <div class="record-card">
+                    <div class="record-card ${status}">
                         <div class="record-header">
-                            <div class="record-icon">${t.icon}</div>
+                            <div class="record-icon">${template.icon}</div>
                             <div style="flex: 1;">
-                                <div style="font-size: 1.3rem; font-weight: 700; margin-bottom: 4px;">${t.name}</div>
-                                <span class="status-badge status-${status}">${status === 'ok' ? '✅ Корректно' : '❌ Не настроено'}</span>
+                                <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 4px;">${template.name}</div>
+                                <span class="status-badge status-${status}">
+                                    ${status === 'ok' ? '✅ Корректно' : '❌ Отсутствует'}
+                                </span>
                             </div>
                         </div>
-                        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; margin-bottom: 20px; font-family: monospace; white-space: pre-line;">
+                        
+                        <div class="record-current" style="opacity: ${records.length ? 1 : 0.5};">
                             ${records.length ? 
-                                records.map(r => `Имя: ${r.name}\nПриоритет: ${r.priority || 'N/A'}\nЗначение: ${r.value}\nTTL: ${r.ttl || 3600}`).join('\n\n---\n\n') : 
-                                'Запись отсутствует'
+                                records.map(r => 
+                                    `Тип: ${r.type || template.type}<br>
+                                     Имя: ${r.name}<br>
+                                     ${r.priority ? `Приоритет: ${r.priority}<br>` : ''}
+                                     Значение: ${r.value}`
+                                ).join('<br><br>') : 
+                                'Текущая запись не найдена'
                             }
                         </div>
-                        <div style="padding: 20px; background: rgba(102,126,234,0.15); border-radius: 16px;">
-                            <strong>${hasCorrectRecord ? '✅ Настроено правильно' : '🔧 Требуется настройка'}</strong><br><br>
-                            <div style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 12px; font-size: 0.95rem;">
-                                Тип: ${t.type}<br>
-                                Имя: ${t.name}<br>
-                                ${t.priority ? `Приоритет: ${t.priority}` : ''}<br>
-                                Значение: <strong>${t.value}</strong><br>
-                                TTL: ${t.ttl}
+                        
+                        <div class="recommendation ${hasCorrect ? 'our-ns' : ''}">
+                            <strong>${hasCorrect ? '✅ Правильно настроено' : '🔧 Рекомендуемая настройка'}</strong>
+                            ${hasCorrect ? '<br><br>' : '<br><br>'}
+                            
+                            <div style="display: flex; align-items: center; gap: 12px; margin-top: 16px;">
+                                <code style="flex: 1; background: rgba(0,0,0,0.1); padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; white-space: pre-line;">
+Тип: ${template.type}
+Имя: ${template.name}
+${template.priority ? `Приоритет: ${template.priority}` : ''}
+Значение: ${template.value}
+TTL: ${template.ttl}
+                                </code>
+                                <button class="copy-btn" onclick="copyRecord('${template.type}', '${template.name}', '${template.priority || ''}', '${template.value}', ${template.ttl})">
+                                    📋 Копировать
+                                </button>
                             </div>
+                            
+                            ${hasCorrect ? 
+                                '<div style="margin-top: 16px; padding: 12px; background: rgba(16,185,129,0.1); border-radius: 8px; font-size: 0.9rem;">' +
+                                '✅ Если вы используете наши NS сервера, эти записи уже должны быть в вашем личном кабинете.' +
+                                '</div>' : 
+                                '<div style="margin-top: 16px; padding: 12px; background: rgba(245,158,11,0.1); border-radius: 8px; font-size: 0.9rem;">' +
+                                '🔧 Если вы на нашем сервере NS, можете добавить эти записи прямо в личном кабинете.' +
+                                '</div>'
+                            }
                         </div>
                     </div>
                 `;
             }
+            
             document.getElementById('recordsGrid').innerHTML = html;
         }
 
-        function closeResults() {
-            document.getElementById('resultsPanel').classList.remove('visible');
+        function copyRecord(type, name, priority, value, ttl) {
+            const text = `Тип: ${type}\nИмя: ${name}\n${priority ? `Приоритет: ${priority}` : ''}\nЗначение: ${value}\nTTL: ${ttl}`;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const original = btn.textContent;
+                btn.textContent = '✅ Скопировано!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.textContent = original;
+                    btn.style.background = '';
+                }, 2000);
+            });
         }
 
+        // Быстрый Enter
         document.getElementById('domainInput').addEventListener('keypress', e => {
             if (e.key === 'Enter') checkDNS();
         });
 
-        window.onload = () => {
-            createParticles();
-            setTimeout(checkDNS, 1000);
-        };
-
-        function createParticles() {
-            const particles = document.getElementById('particles');
-            for (let i = 0; i < 20; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 20 + 's';
-                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
-                particle.style.width = particle.style.height = (2 + Math.random() * 4) + 'px';
-                particles.appendChild(particle);
-            }
-        }
+        // Автодемо
+        window.onload = () => setTimeout(checkDNS, 800);
     </script>
-</head>
 </body>
 </html>
